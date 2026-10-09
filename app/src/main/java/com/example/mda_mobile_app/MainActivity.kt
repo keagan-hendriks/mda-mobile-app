@@ -18,20 +18,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
+import com.example.mda_mobile_app.debug.ApiTestRunner
 import com.example.mda_mobile_app.ui.components.MilestoneFeedback
 import com.example.mda_mobile_app.ui.theme.Mda_mobile_appTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+
+        // Temporary API tests
+        lifecycleScope.launch {
+            ApiTestRunner.testHealth()
+            ApiTestRunner.testPostRequest()
+        }
 
         setContent {
             Mda_mobile_appTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
+
                     MilestoneDemoScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -41,10 +52,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun MilestoneDemoScreen(
     modifier: Modifier = Modifier
 ) {
+
     var showMilestone by remember {
         mutableStateOf(false)
     }
@@ -54,6 +67,7 @@ fun MilestoneDemoScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Button(
             onClick = {
                 showMilestone = true
@@ -64,6 +78,7 @@ fun MilestoneDemoScreen(
     }
 
     if (showMilestone) {
+
         MilestoneFeedback(
             title = "Great job!",
             message = "You did something good ",
