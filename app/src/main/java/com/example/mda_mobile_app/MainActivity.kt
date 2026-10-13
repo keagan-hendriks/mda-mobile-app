@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             ApiTestRunner.testHealth()
             ApiTestRunner.testPostRequest()
+            ApiTestRunner.testGetPreferences()
         }
 
         setContent {
