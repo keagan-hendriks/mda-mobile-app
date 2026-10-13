@@ -3,6 +3,8 @@ package com.example.mda_mobile_app.data.remote
 import com.example.mda_mobile_app.data.model.HealthResponse
 import com.example.mda_mobile_app.data.model.TestRequest
 import com.example.mda_mobile_app.data.model.TestResponse
+import com.example.mda_mobile_app.data.model.common.ApiResponse
+import com.example.mda_mobile_app.data.model.preferences.Preferences
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -17,4 +19,8 @@ interface ApiService {
     suspend fun testRequest(
         @Body request: TestRequest
     ): Response<TestResponse>
+
+    @GET("api/preferences/get.php")
+    suspend fun getPreferences():
+            Response<ApiResponse<Preferences>>
 }

@@ -109,4 +109,72 @@ object ApiTestRunner {
             )
         }
     }
+
+
+    suspend fun testGetPreferences() {
+
+        try {
+            val response = RetrofitClient.api.getPreferences()
+
+            Log.d(
+                "API_PREF_TEST",
+                "HTTP status: ${response.code()}"
+            )
+
+            if (response.isSuccessful) {
+
+                val result = response.body()
+
+                if (result != null && result.success) {
+
+                    val preferences = result.data
+
+                    if (preferences != null) {
+
+                        Log.d(
+                            "API_PREF_TEST",
+                            "User ID: ${preferences.userId}"
+                        )
+
+                        Log.d(
+                            "API_PREF_TEST",
+                            "Notifications: ${preferences.notificationsEnabled}"
+                        )
+
+                        Log.d(
+                            "API_PREF_TEST",
+                            "Theme: ${preferences.theme}"
+                        )
+
+                    } else {
+                        Log.e(
+                            "API_PREF_TEST",
+                            "Preferences data is missing"
+                        )
+                    }
+
+                } else {
+                    Log.e(
+                        "API_PREF_TEST",
+                        result?.message ?: "Empty response"
+                    )
+                }
+
+            } else {
+                Log.e(
+                    "API_PREF_TEST",
+                    "GET request failed: ${response.code()}"
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "API_PREF_TEST",
+                "Could not retrieve preferences",
+                e
+            )
+        }
+    }
+
 }
