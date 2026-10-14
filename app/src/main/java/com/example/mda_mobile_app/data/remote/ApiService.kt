@@ -5,10 +5,12 @@ import com.example.mda_mobile_app.data.model.TestRequest
 import com.example.mda_mobile_app.data.model.TestResponse
 import com.example.mda_mobile_app.data.model.common.ApiResponse
 import com.example.mda_mobile_app.data.model.preferences.Preferences
+import com.example.mda_mobile_app.data.model.preferences.UpdatePreferencesRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface ApiService {
 
@@ -23,4 +25,9 @@ interface ApiService {
     @GET("api/preferences/get.php")
     suspend fun getPreferences():
             Response<ApiResponse<Preferences>>
+
+    @PUT("api/preferences/update.php")
+    suspend fun updatePreferences(
+        @Body request: UpdatePreferencesRequest
+    ): Response<ApiResponse<Preferences>>
 }
