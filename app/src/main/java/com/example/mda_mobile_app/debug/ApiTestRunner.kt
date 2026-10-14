@@ -3,6 +3,7 @@ package com.example.mda_mobile_app.debug
 import android.util.Log
 import com.example.mda_mobile_app.data.model.TestRequest
 import com.example.mda_mobile_app.data.remote.RetrofitClient
+import com.example.mda_mobile_app.data.model.preferences.UpdatePreferencesRequest
 
 object ApiTestRunner {
 
@@ -172,6 +173,89 @@ object ApiTestRunner {
             Log.e(
                 "API_PREF_TEST",
                 "Could not retrieve preferences",
+                e
+            )
+        }
+    }
+
+    //tests PUT to server from android, uses mock data
+    suspend fun testUpdatePreferences() {
+
+        try {
+
+            val request = UpdatePreferencesRequest(
+                notificationsEnabled = false,
+                theme = "light"
+            )
+
+            val response =
+                RetrofitClient.api.updatePreferences(request)
+
+            Log.d(
+                "API_PREF_UPDATE_TEST",
+                "HTTP status: ${response.code()}"
+            )
+
+            if (response.isSuccessful) {
+
+                val result = response.body()
+
+                if (result != null && result.success) {
+
+                    val preferences = result.data
+
+                    if (preferences != null) {
+
+                        Log.d(
+                            "API_PREF_UPDATE_TEST",
+                            "Message: ${result.message}"
+                        )
+
+                        Log.d(
+                            "API_PREF_UPDATE_TEST",
+                            "User ID: ${preferences.userId}"
+                        )
+
+                        Log.d(
+                            "API_PREF_UPDATE_TEST",
+                            "Notifications: ${preferences.notificationsEnabled}"
+                        )
+
+                        Log.d(
+                            "API_PREF_UPDATE_TEST",
+                            "Theme: ${preferences.theme}"
+                        )
+
+                    } else {
+
+                        Log.e(
+                            "API_PREF_UPDATE_TEST",
+                            "Response contained no preference data"
+                        )
+                    }
+
+                } else {
+
+                    Log.e(
+                        "API_PREF_UPDATE_TEST",
+                        result?.message ?: "Empty response"
+                    )
+                }
+
+            } else {
+
+                Log.e(
+                    "API_PREF_UPDATE_TEST",
+                    "PUT failed: ${response.code()} " +
+                            response.errorBody()?.string()
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "API_PREF_UPDATE_TEST",
+                "Could not update preferences",
                 e
             )
         }

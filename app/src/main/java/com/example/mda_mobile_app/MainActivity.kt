@@ -33,9 +33,10 @@ class MainActivity : ComponentActivity() {
 
         // Temporary API tests
         lifecycleScope.launch {
-            ApiTestRunner.testHealth()
-            ApiTestRunner.testPostRequest()
-            ApiTestRunner.testGetPreferences()
+            ApiTestRunner.testHealth() //basic health check can stay in final ver
+            ApiTestRunner.testPostRequest() //basic health check can stay in final ver
+            ApiTestRunner.testGetPreferences() //uses mock data
+            ApiTestRunner.testUpdatePreferences() //uses mock data
         }
 
         setContent {
