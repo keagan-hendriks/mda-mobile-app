@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.mda_mobile_app.debug.ApiTestRunner
 import com.example.mda_mobile_app.ui.components.MilestoneFeedback
 import com.example.mda_mobile_app.ui.theme.Mda_mobile_appTheme
+import com.mda.screens.AppRoot
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -41,18 +42,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Mda_mobile_appTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) { innerPadding ->
-
-                    MilestoneDemoScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppRoot()
             }
         }
     }
 }
+
 
 
 @Composable
