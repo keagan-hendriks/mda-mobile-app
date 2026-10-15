@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Progress screen. Everything sits inside a ScrollView so nothing is ever cut off.
+     fitsSystemWindows keeps the content clear of the status bar and navigation bar. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My progress"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Streak number -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/streakCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="56sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="day streak"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/bestStreakText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Best streak: 0 days"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Badges"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- The badge rows are added here by ProgressActivity.kt -->
+        <LinearLayout
+            android:id="@+id/badgesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" />
+
+        <!-- DEMO PANEL: only visible while DEMO_MODE = true in ProgressActivity.kt.
+             Delete this whole block when the real data is connected. -->
+        <LinearLayout
+            android:id="@+id/demoPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DEMO - try the pop-ups"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Tap 'Log a dose' three times: the first two show a small message, the third unlocks a badge. Build a streak of 3+ first, then tap 'Missed a day' to see the gentle reset message."
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/demoLogButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Log a dose (+1 day)" />
+
+            <Button
+                android:id="@+id/demoMissButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Missed a day (streak restarts)" />
+
+            <Button
+                android:id="@+id/demoNotifyButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send a test notification now" />
+
+            <Button
+                android:id="@+id/demoRemindButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remind me in 1 minute" />
+
+            <Button
+                android:id="@+id/demoResetButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reset demo" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
