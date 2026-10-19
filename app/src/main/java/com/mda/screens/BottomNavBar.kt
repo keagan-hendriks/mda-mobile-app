@@ -1,18 +1,21 @@
 package com.mda.screens
 
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.sp
 
-enum class BottomTab(val label: String, val icon: String) {
-    Home("Home", "\uD83C\uDFE0"),
-    Search("Search", "\uD83D\uDD0D"),
-    Alerts("Alerts", "\uD83D\uDD14"),
-    Profile("Profile", "\uD83D\uDC64"),
-    Settings("Settings", "\u2699\uFE0F"),
+enum class BottomTab(val label: String, val icon: ImageVector) {
+    Home("Home", AppIcons.Home),
+    Search("Search", AppIcons.Search),
+    Alerts("Alerts", AppIcons.Bell),
+    Profile("Profile", AppIcons.Person),
+    Settings("Settings", AppIcons.Settings),
 }
 
 @Composable
@@ -22,8 +25,15 @@ fun BottomNavBar(selected: BottomTab, onSelect: (BottomTab) -> Unit) {
             NavigationBarItem(
                 selected = tab == selected,
                 onClick = { onSelect(tab) },
-                icon = { Text(tab.icon, fontSize = 20.sp) },
-                label = { Text(tab.label, fontSize = 11.sp) }
+                icon = { Icon(tab.icon, contentDescription = tab.label) },
+                label = { Text(tab.label, fontSize = 11.sp) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = AppColors.Ink,
+                    selectedTextColor = AppColors.Ink,
+                    indicatorColor = AppColors.ButtonFill,
+                    unselectedIconColor = AppColors.Muted,
+                    unselectedTextColor = AppColors.Muted
+                )
             )
         }
     }

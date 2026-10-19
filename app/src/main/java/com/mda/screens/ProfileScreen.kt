@@ -32,14 +32,12 @@ fun ProfileScreen(onLogout: () -> Unit) {
             }
             Spacer(Modifier.height(8.dp))
             Text(PlaceholderData.fullName, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = AppColors.Ink)
-            Text(PlaceholderData.memberSince, fontSize = 12.sp, color = AppColors.Muted)
         }
 
         Spacer(Modifier.height(24.dp))
 
         InfoRow("Full Name", PlaceholderData.fullName)
         InfoRow("Email Address", PlaceholderData.email)
-        InfoRow("Primary Doctor", PlaceholderData.doctor)
 
         Spacer(Modifier.height(24.dp))
         // TODO (API teammate): clear the saved session / token before calling onLogout()
