@@ -6,6 +6,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -37,11 +38,11 @@ fun SearchScreen() {
             onValueChange = { query = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Search medications", color = AppColors.Muted) },
-            leadingIcon = { Text("\uD83D\uDD0D") },
+            leadingIcon = { Icon(AppIcons.Search, contentDescription = null, modifier = Modifier.size(20.dp)) },
             trailingIcon = if (query.isNotEmpty()) {
                 {
                     IconButton(onClick = { query = "" }) {
-                        Text("\u2715", color = AppColors.Muted)
+                        Icon(AppIcons.Close, contentDescription = "Clear search", modifier = Modifier.size(18.dp))
                     }
                 }
             } else null,
@@ -98,7 +99,9 @@ private fun MedicationRow(item: MedItem) {
                 border = BorderStroke(1.dp, AppColors.Border),
                 modifier = Modifier.size(40.dp)
             ) {
-                Box(contentAlignment = Alignment.Center) { Text("\uD83D\uDC8A") }
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(AppIcons.Pill, contentDescription = null, tint = AppColors.Ink, modifier = Modifier.size(22.dp))
+                }
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {

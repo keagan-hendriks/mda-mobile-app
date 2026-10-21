@@ -15,8 +15,6 @@ object PlaceholderData {
     const val firstName = "Sarah"
     const val initials = "SJ"
     const val email = "sarah.j@workspace.com"
-    const val doctor = "Dr. Robert Chen"
-    const val memberSince = "Member since Jan 2026"
 
     const val adherencePercent = 85
     const val streakDays = 12
@@ -29,7 +27,7 @@ object PlaceholderData {
     val alerts = listOf(
         AlertItem("Refill alert: Your Amoxicillin pack is low (2 units remaining)", "10 mins ago", unread = true),
         AlertItem("Weekly adherence summary: 94% score achieved! \uD83C\uDF89", "2 hours ago", unread = true),
-        AlertItem("Doctor Chen modified your dosage for Lisinopril", "Yesterday", unread = false),
+        AlertItem("Reminder: Your Lisinopril dose is due at 12:30 PM", "Yesterday", unread = false),
         AlertItem("Security Alert: Successful login from secondary device", "3 days ago", unread = false),
     )
 
