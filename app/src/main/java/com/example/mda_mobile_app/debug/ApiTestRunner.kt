@@ -111,154 +111,253 @@ object ApiTestRunner {
         }
     }
 
+//commented out as it is the old hardcoded version of just testing the API call
+//    suspend fun testGetPreferences() {
+//
+//        try {
+//            val response = RetrofitClient.api.getPreferences()
+//
+//            Log.d(
+//                "API_PREF_TEST",
+//                "HTTP status: ${response.code()}"
+//            )
+//
+//            if (response.isSuccessful) {
+//
+//                val result = response.body()
+//
+//                if (result != null && result.success) {
+//
+//                    val preferences = result.data
+//
+//                    if (preferences != null) {
+//
+//                        Log.d(
+//                            "API_PREF_TEST",
+//                            "User ID: ${preferences.userId}"
+//                        )
+//
+//                        Log.d(
+//                            "API_PREF_TEST",
+//                            "Notifications: ${preferences.notificationsEnabled}"
+//                        )
+//
+//                        Log.d(
+//                            "API_PREF_TEST",
+//                            "Theme: ${preferences.theme}"
+//                        )
+//
+//                    } else {
+//                        Log.e(
+//                            "API_PREF_TEST",
+//                            "Preferences data is missing"
+//                        )
+//                    }
+//
+//                } else {
+//                    Log.e(
+//                        "API_PREF_TEST",
+//                        result?.message ?: "Empty response"
+//                    )
+//                }
+//
+//            } else {
+//                Log.e(
+//                    "API_PREF_TEST",
+//                    "GET request failed: ${response.code()}"
+//                )
+//            }
+//
+//        } catch (e: Exception) {
+//
+//            Log.e(
+//                "API_PREF_TEST",
+//                "Could not retrieve preferences",
+//                e
+//            )
+//        }
+//    }
+
+    //tests PUT to server from android, uses mock data, commented out to replace mock data with real db call
+//    suspend fun testUpdatePreferences() {
+//
+//        try {
+//
+//            val request = UpdatePreferencesRequest(
+//                notificationsEnabled = false,
+//                theme = "light"
+//            )
+//
+//            val response =
+//                RetrofitClient.api.updatePreferences(request)
+//
+//            Log.d(
+//                "API_PREF_UPDATE_TEST",
+//                "HTTP status: ${response.code()}"
+//            )
+//
+//            if (response.isSuccessful) {
+//
+//                val result = response.body()
+//
+//                if (result != null && result.success) {
+//
+//                    val preferences = result.data
+//
+//                    if (preferences != null) {
+//
+//                        Log.d(
+//                            "API_PREF_UPDATE_TEST",
+//                            "Message: ${result.message}"
+//                        )
+//
+//                        Log.d(
+//                            "API_PREF_UPDATE_TEST",
+//                            "User ID: ${preferences.userId}"
+//                        )
+//
+//                        Log.d(
+//                            "API_PREF_UPDATE_TEST",
+//                            "Notifications: ${preferences.notificationsEnabled}"
+//                        )
+//
+//                        Log.d(
+//                            "API_PREF_UPDATE_TEST",
+//                            "Theme: ${preferences.theme}"
+//                        )
+//
+//                    } else {
+//
+//                        Log.e(
+//                            "API_PREF_UPDATE_TEST",
+//                            "Response contained no preference data"
+//                        )
+//                    }
+//
+//                } else {
+//
+//                    Log.e(
+//                        "API_PREF_UPDATE_TEST",
+//                        result?.message ?: "Empty response"
+//                    )
+//                }
+//
+//            } else {
+//
+//                Log.e(
+//                    "API_PREF_UPDATE_TEST",
+//                    "PUT failed: ${response.code()} " +
+//                            response.errorBody()?.string()
+//                )
+//            }
+//
+//        } catch (e: Exception) {
+//
+//            Log.e(
+//                "API_PREF_UPDATE_TEST",
+//                "Could not update preferences",
+//                e
+//            )
+//        }
+//    }
+
 
     suspend fun testGetPreferences() {
 
         try {
-            val response = RetrofitClient.api.getPreferences()
+            val userId = 128 //test user not a real user
 
-            Log.d(
-                "API_PREF_TEST",
-                "HTTP status: ${response.code()}"
-            )
+            val response =
+                RetrofitClient.api.getPreferences(userId)
+
+            Log.d("API_PREF_GET", "HTTP status: ${response.code()}")
 
             if (response.isSuccessful) {
-
                 val result = response.body()
+                val preferences = result?.data
 
-                if (result != null && result.success) {
+                if (result?.success == true && preferences != null) {
 
-                    val preferences = result.data
-
-                    if (preferences != null) {
-
-                        Log.d(
-                            "API_PREF_TEST",
-                            "User ID: ${preferences.userId}"
-                        )
-
-                        Log.d(
-                            "API_PREF_TEST",
-                            "Notifications: ${preferences.notificationsEnabled}"
-                        )
-
-                        Log.d(
-                            "API_PREF_TEST",
-                            "Theme: ${preferences.theme}"
-                        )
-
-                    } else {
-                        Log.e(
-                            "API_PREF_TEST",
-                            "Preferences data is missing"
-                        )
-                    }
+                    Log.d("API_PREF_GET", "User ID: ${preferences.userId}")
+                    Log.d("API_PREF_GET", "Notifications: ${preferences.notificationsEnabled}")
+                    Log.d("API_PREF_GET", "Sound: ${preferences.soundEnabled}")
+                    Log.d("API_PREF_GET", "Trusted contact sharing: ${preferences.trustedContactSharing}")
 
                 } else {
                     Log.e(
-                        "API_PREF_TEST",
-                        result?.message ?: "Empty response"
+                        "API_PREF_GET",
+                        result?.message ?: "No preferences returned"
                     )
                 }
 
             } else {
                 Log.e(
-                    "API_PREF_TEST",
-                    "GET request failed: ${response.code()}"
+                    "API_PREF_GET",
+                    "Request failed: ${response.errorBody()?.string()}"
                 )
             }
 
         } catch (e: Exception) {
-
             Log.e(
-                "API_PREF_TEST",
-                "Could not retrieve preferences",
+                "API_PREF_GET",
+                "Could not get preferences",
                 e
             )
         }
     }
 
-    //tests PUT to server from android, uses mock data
+
     suspend fun testUpdatePreferences() {
 
         try {
+            val userId = 128 //test user not a real user
 
             val request = UpdatePreferencesRequest(
+                userId = userId,
                 notificationsEnabled = false,
-                theme = "light"
+                soundEnabled = false,
+                trustedContactSharing = true
             )
 
             val response =
                 RetrofitClient.api.updatePreferences(request)
 
-            Log.d(
-                "API_PREF_UPDATE_TEST",
-                "HTTP status: ${response.code()}"
-            )
+            Log.d("API_PREF_PUT", "HTTP status: ${response.code()}")
 
             if (response.isSuccessful) {
-
                 val result = response.body()
+                val preferences = result?.data
 
-                if (result != null && result.success) {
+                if (result?.success == true && preferences != null) {
 
-                    val preferences = result.data
-
-                    if (preferences != null) {
-
-                        Log.d(
-                            "API_PREF_UPDATE_TEST",
-                            "Message: ${result.message}"
-                        )
-
-                        Log.d(
-                            "API_PREF_UPDATE_TEST",
-                            "User ID: ${preferences.userId}"
-                        )
-
-                        Log.d(
-                            "API_PREF_UPDATE_TEST",
-                            "Notifications: ${preferences.notificationsEnabled}"
-                        )
-
-                        Log.d(
-                            "API_PREF_UPDATE_TEST",
-                            "Theme: ${preferences.theme}"
-                        )
-
-                    } else {
-
-                        Log.e(
-                            "API_PREF_UPDATE_TEST",
-                            "Response contained no preference data"
-                        )
-                    }
+                    Log.d("API_PREF_PUT", "Message: ${result.message}")
+                    Log.d("API_PREF_PUT", "User ID: ${preferences.userId}")
+                    Log.d("API_PREF_PUT", "Notifications: ${preferences.notificationsEnabled}")
+                    Log.d("API_PREF_PUT", "Sound: ${preferences.soundEnabled}")
+                    Log.d("API_PREF_PUT", "Trusted contact sharing: ${preferences.trustedContactSharing}")
 
                 } else {
-
                     Log.e(
-                        "API_PREF_UPDATE_TEST",
-                        result?.message ?: "Empty response"
+                        "API_PREF_PUT",
+                        result?.message ?: "No preferences returned"
                     )
                 }
 
             } else {
-
                 Log.e(
-                    "API_PREF_UPDATE_TEST",
-                    "PUT failed: ${response.code()} " +
-                            response.errorBody()?.string()
+                    "API_PREF_PUT",
+                    "Request failed: ${response.errorBody()?.string()}"
                 )
             }
 
         } catch (e: Exception) {
-
             Log.e(
-                "API_PREF_UPDATE_TEST",
+                "API_PREF_PUT",
                 "Could not update preferences",
                 e
             )
         }
     }
+
 
 }
