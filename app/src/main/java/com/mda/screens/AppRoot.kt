@@ -8,6 +8,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.mda_mobile_app.ui.medication.MedicationScreen
 
 enum class Route { Login, Register, Main }
 
@@ -58,7 +59,7 @@ fun MainScaffold(onLogout: () -> Unit) {
         Box(Modifier.padding(innerPadding)) {
             when (tab) {
                 BottomTab.Home -> HomeScreen()
-                BottomTab.Search -> SearchScreen()
+                BottomTab.Medications -> MedicationScreen()
                 BottomTab.Alerts -> NotificationsScreen()
                 BottomTab.Profile -> ProfileScreen(onLogout = onLogout)
                 BottomTab.Settings -> SettingsScreen()

@@ -36,8 +36,8 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             ApiTestRunner.testHealth() //basic health check can stay in final ver
             ApiTestRunner.testPostRequest() //basic health check can stay in final ver
-            ApiTestRunner.testGetPreferences() //uses mock data
-            ApiTestRunner.testUpdatePreferences() //uses mock data
+//            ApiTestRunner.testGetPreferences() //uses mock data
+//            ApiTestRunner.testUpdatePreferences() //uses mock data
         }
 
         setContent {

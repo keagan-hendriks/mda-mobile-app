@@ -88,8 +88,15 @@ interface ApiService {
     @GET("api/medications/get.php")
     suspend fun listMedications(@Query("userId") userId: Int, @Query("limit") limit: Int? = null, @Query("offset") offset: Int? = null): Response<ApiResponse<List<Medication>>>
 
+    //leaving old update call in case someone else used it
+//    @PUT("api/medications/update.php")
+//    suspend fun updateMedication(@Body fields: Map<String, Any?>): Response<ApiResponse<Medication>>
+
+    //new medications/update call to fix error
     @PUT("api/medications/update.php")
-    suspend fun updateMedication(@Body fields: Map<String, Any?>): Response<ApiResponse<Medication>>
+    suspend fun updateMedication(
+        @Body request: UpdateMedicationRequest
+    ): Response<ApiResponse<Medication>>
 
     @DELETE("api/medications/delete.php")
     suspend fun deleteMedication(@Query("medicationId") medicationId: Int): Response<ApiResponse<Medication>>
@@ -120,8 +127,15 @@ interface ApiService {
     @GET("api/medication_logs/get.php")
     suspend fun listMedicationLogs(@Query("userId") userId: Int, @Query("limit") limit: Int? = null, @Query("offset") offset: Int? = null): Response<ApiResponse<List<MedicationLog>>>
 
+    //same as in medications leaving old one here in case we need to go back
+//    @PUT("api/medication_logs/update.php")
+//    suspend fun updateMedicationLog(@Body fields: Map<String, Any?>): Response<ApiResponse<MedicationLog>>
+
+    //new update to address bug with Java and Kotlin wildcard mismatch
     @PUT("api/medication_logs/update.php")
-    suspend fun updateMedicationLog(@Body fields: Map<String, Any?>): Response<ApiResponse<MedicationLog>>
+    suspend fun updateMedicationLog(
+        @Body request: UpdateMedicationLogRequest
+    ): Response<ApiResponse<MedicationLog>>
 
     @DELETE("api/medication_logs/delete.php")
     suspend fun deleteMedicationLog(@Query("logId") logId: Int): Response<ApiResponse<MedicationLog>>
