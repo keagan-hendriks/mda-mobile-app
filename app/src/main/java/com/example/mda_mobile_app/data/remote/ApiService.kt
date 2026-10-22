@@ -18,7 +18,9 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
 import retrofit2.http.DELETE
-
+import retrofit2.http.Header
+import com.example.mda_mobile_app.data.model.users.LoginRequest
+import com.example.mda_mobile_app.data.model.users.LoginData
 interface ApiService {
 
     @GET("api/health.php")
@@ -45,6 +47,18 @@ interface ApiService {
     suspend fun createUser(
         @Body request: CreateUserRequest
     ): Response<ApiResponse<User>>
+
+    // Authentication: login
+    @POST("api/login.php")
+    suspend fun login(
+        @Body request: LoginRequest
+    ): Response<ApiResponse<LoginData>>
+
+    // Authentication: logout
+    @POST("api/logout.php")
+    suspend fun logout(
+        @Header("Authorization") authorization: String
+    ): Response<ApiResponse<Any>>
 
     @GET("api/users/get.php")
     suspend fun getUser(
@@ -186,6 +200,11 @@ interface ApiService {
     ): Response<ApiResponse<Any>>
 
     //auth tokens , Karabo needs to double check this part
+    //The current PHP api/login.php already generates and stores authentication tokens,
+    // while api/logout.php revokes the authenticated token. The separate auth_tokens CRUD
+    // methods may therefore be redundant. Please confirm whether these methods are used
+    // elsewhere in the app before removing them, to avoid duplicate token management or
+    // breaking existing functionality.
     @POST("api/auth_tokens/create.php")
     suspend fun createAuthToken(
         @Body request: CreateAuthTokenRequest

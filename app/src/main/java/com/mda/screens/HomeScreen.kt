@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(firstName: String) {
     ScreenColumn {
-        ScreenHeader("Welcome, ${PlaceholderData.firstName}", "Here is your overview for today")
+        ScreenHeader("Welcome, $firstName!", "Here is your overview for today")
 
         // Adherence streak card
         AppCard {
