@@ -11,20 +11,25 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.mda_mobile_app.ui.medication.MedicationScreen
 import androidx.compose.ui.platform.LocalContext
 import com.example.mda_mobile_app.data.model.users.CreateUserRequest
 import com.example.mda_mobile_app.data.model.users.LoginRequest
 import com.example.mda_mobile_app.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
 
-enum class Route {
-    Login,
-    Register,
-    Main
-}
+enum class Route { Login, Register, Main }
 
+/**
+ * Entry point for all screens. MainActivity just calls AppRoot().
+ *
+ * Navigation is a simple "which screen am I on" variable so no extra
+ * libraries are needed. If the team later adds Navigation Compose,
+ * only this file has to change.
+ */
 @Composable
 fun AppRoot() {
+    // UI teammate: swap this MaterialTheme for the project's real theme when it's ready.
     MaterialTheme(
         colorScheme = lightColorScheme(
             primary = AppColors.Ink,
@@ -227,6 +232,8 @@ fun MainScaffold(
     ) { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
             when (tab) {
+                BottomTab.Home -> HomeScreen()
+                BottomTab.Medications -> MedicationScreen()
                 BottomTab.Home -> HomeScreen(
                     firstName = firstName
                 )

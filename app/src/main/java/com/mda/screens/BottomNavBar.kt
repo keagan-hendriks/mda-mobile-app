@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 
 enum class BottomTab(val label: String, val icon: ImageVector) {
     Home("Home", AppIcons.Home),
-    Search("Search", AppIcons.Search),
+    Medications("Meds", AppIcons.Pill),
     Alerts("Alerts", AppIcons.Bell),
     Profile("Profile", AppIcons.Person),
     Settings("Settings", AppIcons.Settings),

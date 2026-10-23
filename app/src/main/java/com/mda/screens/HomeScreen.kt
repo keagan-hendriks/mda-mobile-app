@@ -12,9 +12,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mda_mobile_app.ui.medication.LogEditorDialog
+import com.example.mda_mobile_app.ui.medication.MedicationViewModel
 
+//TODO: replace temp hardcoded user when Karabo is done with Login
 @Composable
 fun HomeScreen(firstName: String) {
+fun HomeScreen(userId: Int = 1) {
+    val medicationViewModel: MedicationViewModel = viewModel(
+        key = "medication-$userId",
+        factory = MedicationViewModel.factory(userId)
+    )
+    val medicationState by medicationViewModel.state.collectAsState()
+    var showLogDialog by remember { mutableStateOf(false) }
+
     ScreenColumn {
         ScreenHeader("Welcome, $firstName!", "Here is your overview for today")
 
@@ -52,14 +64,42 @@ fun HomeScreen(firstName: String) {
         }
 
         Spacer(Modifier.height(8.dp))
-        // TODO: open the "log a medication" form
-        AppButton("+  Log a quick medication take", onClick = { })
+
+        if (medicationState.error != null) {
+            Text("Medication error: ${medicationState.error}", color = Color(0xFFB00020))
+        }
+        if (medicationState.notice == "Intake recorded") {
+            Text("Intake recorded", color = AppColors.Success)
+        }
+        if (medicationState.medications.none { it.isActive }) {
+            Text(
+                if (medicationState.loading) "Loading medications…"
+                else "Add an active medication on the Meds tab before logging intake.",
+                fontSize = 13.sp, color = AppColors.Muted
+            )
+        }
+        AppButton(
+            "+  Log a quick medication take",
+            onClick = { showLogDialog = true }
+        )
         Spacer(Modifier.height(24.dp))
+    }
+
+    if (showLogDialog) {
+        LogEditorDialog(
+            original = null,
+            medications = medicationState.medications,
+            onDismiss = { showLogDialog = false },
+            onSave = { medicationId, whenAt, status, notes ->
+                medicationViewModel.addLog(medicationId, whenAt, status, notes)
+                showLogDialog = false
+            }
+        )
     }
 }
 
 @Composable
-private fun ReminderRow(reminder: Reminder) {
+fun ReminderRow(reminder: Reminder) {
     AppCard {
         Row(
             Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
