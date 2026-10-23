@@ -20,7 +20,7 @@ import java.util.Locale
 //TODO: replace user with real user when Login code works
 //local testing only replace userID with real user after login code is added
 @Composable
-fun MedicationScreen(userId: Int = 1) {
+fun MedicationScreen(userId: Int) {
     require(userId > 0) { "userId must be positive" }
     val vm: MedicationViewModel = viewModel(
         key = "medication-$userId",

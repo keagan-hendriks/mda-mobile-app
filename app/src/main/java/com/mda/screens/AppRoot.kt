@@ -1,4 +1,3 @@
-
 package com.mda.screens
 
 import android.content.Context
@@ -43,6 +42,7 @@ fun AppRoot() {
         var firstName by remember { mutableStateOf("") }
         var accountFullName by remember { mutableStateOf("") }
         var accountEmail by remember { mutableStateOf("") }
+        var authenticatedUserId by remember { mutableStateOf<Int?>(null) }
 
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
@@ -62,16 +62,6 @@ fun AppRoot() {
                             val result = response.body()
                             val data = result?.data
 
-                            //temp debugging
-                            android.util.Log.d(
-                                "LOGIN_DEBUG",
-                                "HTTP ${response.code()} | " +
-                                        "Success: ${result?.success} | " +
-                                        "Message: ${result?.message} | " +
-                                        "Has data: ${data != null} | " +
-                                        "Error: ${response.errorBody()?.string()}"
-                            )
-
                             if (
                                 response.isSuccessful &&
                                 result?.success == true &&
@@ -86,6 +76,7 @@ fun AppRoot() {
                                     .apply()
 
                                 // Save the user's details from the API response.
+                                authenticatedUserId = data.user.userId
                                 accountFullName = data.user.fullName
                                 accountEmail = data.user.email
                                 firstName = accountFullName
@@ -151,25 +142,13 @@ fun AppRoot() {
                                     Toast.LENGTH_SHORT
                                 ).show()
 
-                                route = Route.Main
-//                            } else {
-//                                Toast.makeText(
-//                                    context,
-//                                    result?.message ?: "Registration failed.",
-//                                    Toast.LENGTH_LONG
-//                                ).show()
-//                            }
+                                // Registration creates an account, not an authenticated session.
+                                // Ask the user to sign in to obtain their user ID and token.
+                                route = Route.Login
                             } else {
-                                android.util.Log.e(
-                                    "REGISTER_DEBUG",
-                                    "HTTP ${response.code()} | " +
-                                            "API message: ${result?.message} | " +
-                                            "Error body: ${response.errorBody()?.string()}"
-                                )
-
                                 Toast.makeText(
                                     context,
-                                    result?.message ?: "Registration failed: HTTP ${response.code()}",
+                                    result?.message ?: "Registration failed.",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -187,7 +166,8 @@ fun AppRoot() {
                 }
             )
 
-            Route.Main -> MainScaffold(
+            Route.Main -> authenticatedUserId?.let { signedInId -> MainScaffold(
+                userId = signedInId,
                 firstName = firstName,
                 fullName = accountFullName,
                 email = accountEmail,
@@ -223,12 +203,13 @@ fun AppRoot() {
                             firstName = ""
                             accountFullName = ""
                             accountEmail = ""
+                            authenticatedUserId = null
 
                             route = Route.Login
                         }
                     }
                 }
-            )
+            ) }
         }
     }
 }
@@ -238,6 +219,7 @@ fun AppRoot() {
  */
 @Composable
 fun MainScaffold(
+    userId: Int,
     firstName: String,
     fullName: String,
     email: String,
@@ -256,13 +238,8 @@ fun MainScaffold(
     ) { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
             when (tab) {
-                BottomTab.Home -> HomeScreen(
-                    firstName = firstName
-                )
-
-                BottomTab.Medications -> MedicationScreen()
-
-//                BottomTab.Search -> SearchScreen()
+                BottomTab.Home -> HomeScreen(firstName = firstName, userId = userId)
+                BottomTab.Medications -> MedicationScreen(userId = userId)
 
                 BottomTab.Alerts -> NotificationsScreen()
 
