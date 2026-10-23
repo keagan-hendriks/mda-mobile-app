@@ -157,6 +157,25 @@ fun FormField(
     }
 }
 
+@Composable
+fun InfoRow(label: String, value: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = AppColors.Muted,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
+        Text(
+            text = value,
+            fontSize = 16.sp,
+            color = AppColors.Ink,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
 // ---------------------------------------------------------------
 // Icons drawn from path data, so no icon library is needed.
 // Use them with: Icon(AppIcons.Home, contentDescription = "Home")

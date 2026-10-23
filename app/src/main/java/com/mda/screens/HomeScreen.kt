@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
+//import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +19,8 @@ import com.example.mda_mobile_app.ui.medication.MedicationViewModel
 
 //TODO: replace temp hardcoded user when Karabo is done with Login
 @Composable
-fun HomeScreen(userId: Int = 1) {
+
+fun HomeScreen(firstName: String, userId: Int = 1) {
     val medicationViewModel: MedicationViewModel = viewModel(
         key = "medication-$userId",
         factory = MedicationViewModel.factory(userId)
@@ -27,9 +29,9 @@ fun HomeScreen(userId: Int = 1) {
     var showLogDialog by remember { mutableStateOf(false) }
 
     ScreenColumn {
-        ScreenHeader("Welcome, ${PlaceholderData.firstName}", "Here is your overview for today")
+        ScreenHeader("Welcome, $firstName!", "Here is your overview for today")
 
-        // Streak remains unchanged until the team agrees on the calculation.
+        // Adherence streak card
         AppCard {
             Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(
@@ -56,10 +58,12 @@ fun HomeScreen(userId: Int = 1) {
         }
 
         SectionLabel("UPCOMING REMINDERS", Modifier.padding(top = 16.dp))
+
         PlaceholderData.reminders.forEach { reminder ->
             ReminderRow(reminder)
             Spacer(Modifier.height(8.dp))
         }
+
         Spacer(Modifier.height(8.dp))
 
         if (medicationState.error != null) {
@@ -96,7 +100,7 @@ fun HomeScreen(userId: Int = 1) {
 }
 
 @Composable
-private fun ReminderRow(reminder: Reminder) {
+fun ReminderRow(reminder: Reminder) {
     AppCard {
         Row(
             Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -107,7 +111,7 @@ private fun ReminderRow(reminder: Reminder) {
                     Modifier.size(22.dp).background(AppColors.Success, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("✓", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text("\u2713", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 }
             } else {
                 Box(Modifier.size(20.dp).border(1.5.dp, AppColors.Muted, CircleShape))
