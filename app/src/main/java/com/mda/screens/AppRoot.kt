@@ -62,6 +62,16 @@ fun AppRoot() {
                             val result = response.body()
                             val data = result?.data
 
+                            //temp debugging
+                            android.util.Log.d(
+                                "LOGIN_DEBUG",
+                                "HTTP ${response.code()} | " +
+                                        "Success: ${result?.success} | " +
+                                        "Message: ${result?.message} | " +
+                                        "Has data: ${data != null} | " +
+                                        "Error: ${response.errorBody()?.string()}"
+                            )
+
                             if (
                                 response.isSuccessful &&
                                 result?.success == true &&
@@ -142,10 +152,24 @@ fun AppRoot() {
                                 ).show()
 
                                 route = Route.Main
+//                            } else {
+//                                Toast.makeText(
+//                                    context,
+//                                    result?.message ?: "Registration failed.",
+//                                    Toast.LENGTH_LONG
+//                                ).show()
+//                            }
                             } else {
+                                android.util.Log.e(
+                                    "REGISTER_DEBUG",
+                                    "HTTP ${response.code()} | " +
+                                            "API message: ${result?.message} | " +
+                                            "Error body: ${response.errorBody()?.string()}"
+                                )
+
                                 Toast.makeText(
                                     context,
-                                    result?.message ?: "Registration failed.",
+                                    result?.message ?: "Registration failed: HTTP ${response.code()}",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -232,13 +256,13 @@ fun MainScaffold(
     ) { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
             when (tab) {
-                BottomTab.Home -> HomeScreen()
-                BottomTab.Medications -> MedicationScreen()
                 BottomTab.Home -> HomeScreen(
                     firstName = firstName
                 )
 
-                BottomTab.Search -> SearchScreen()
+                BottomTab.Medications -> MedicationScreen()
+
+//                BottomTab.Search -> SearchScreen()
 
                 BottomTab.Alerts -> NotificationsScreen()
 

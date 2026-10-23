@@ -5,7 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+//import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,8 +19,8 @@ import com.example.mda_mobile_app.ui.medication.MedicationViewModel
 
 //TODO: replace temp hardcoded user when Karabo is done with Login
 @Composable
-fun HomeScreen(firstName: String) {
-fun HomeScreen(userId: Int = 1) {
+
+fun HomeScreen(firstName: String, userId: Int = 1) {
     val medicationViewModel: MedicationViewModel = viewModel(
         key = "medication-$userId",
         factory = MedicationViewModel.factory(userId)
