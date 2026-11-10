@@ -25,8 +25,41 @@ class MedicationRepository(private val api: ApiService = RetrofitClient.api) {
     }
 
     suspend fun medications(userId: Int): List<Medication> = unwrap(api.listMedications(userId))
+    suspend fun reminders(userId: Int): List<Reminder> =
+        unwrap(api.listReminders(userId))
     suspend fun logs(userId: Int): List<MedicationLog> = unwrap(api.listMedicationLogs(userId))
+// REWARDS
 
+    // Fetch the user's rewards record.
+// Returns null if the user has not received a rewards record yet.
+    suspend fun userRewards(userId: Int): UserRewards? =
+        unwrap(api.listUserRewards(userId)).firstOrNull()
+
+    // Create a rewards record with zero points and streaks.
+    suspend fun createUserRewards(userId: Int): UserRewards =
+        unwrap(
+            api.createUserRewards(
+                CreateUserRewardsRequest(userId = userId)
+            )
+        )
+
+    // Update the user's points and streak information.
+    suspend fun updateUserRewards(
+        userId: Int,
+        totalPoints: Int,
+        currentStreak: Int,
+        longestStreak: Int
+    ): UserRewards =
+        unwrap(
+            api.updateUserRewards(
+                mapOf(
+                    "userId" to userId,
+                    "totalPoints" to totalPoints,
+                    "currentStreak" to currentStreak,
+                    "longestStreak" to longestStreak
+                )
+            )
+        )
     suspend fun addMedication(userId: Int, name: String, notes: String?): Medication =
         unwrap(api.createMedication(CreateMedicationRequest(userId, name, notes)))
 

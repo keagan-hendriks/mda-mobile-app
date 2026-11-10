@@ -1,3 +1,4 @@
+
 package com.mda.screens
 
 import android.content.Context
@@ -23,13 +24,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * Saved user preferences. They are stored on the phone itself, so no
- * database or API is needed and they survive closing the app.
- *
- * Reminders / notifications teammates can read them like this:
- *   if (AppSettings.notificationsEnabled(context)) { /* show the notification */ }
- *   val snooze = AppSettings.snoozeMinutes(context)
+import com.example.mda_mobile_app.data.model.crud.Medication
+import com.example.mda_mobile_app.data.model.crud.MedicationLog
+
+/*
+ * Saved user preferences.
+ * They are stored locally on the phone.
  */
 object AppSettings {
     private const val FILE = "mda_settings"
@@ -44,41 +44,67 @@ object AppSettings {
         prefs(context).getBoolean(KEY_NOTIFICATIONS, true)
 
     fun setNotificationsEnabled(context: Context, value: Boolean) {
-        prefs(context).edit().putBoolean(KEY_NOTIFICATIONS, value).apply()
+        prefs(context).edit()
+            .putBoolean(KEY_NOTIFICATIONS, value)
+            .apply()
     }
 
     fun vibrationEnabled(context: Context): Boolean =
         prefs(context).getBoolean(KEY_VIBRATION, true)
 
     fun setVibrationEnabled(context: Context, value: Boolean) {
-        prefs(context).edit().putBoolean(KEY_VIBRATION, value).apply()
+        prefs(context).edit()
+            .putBoolean(KEY_VIBRATION, value)
+            .apply()
     }
 
     fun snoozeMinutes(context: Context): Int =
         prefs(context).getInt(KEY_SNOOZE, 10)
 
     fun setSnoozeMinutes(context: Context, minutes: Int) {
-        prefs(context).edit().putInt(KEY_SNOOZE, minutes).apply()
+        prefs(context).edit()
+            .putInt(KEY_SNOOZE, minutes)
+            .apply()
     }
 }
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    medicationLogs: List<MedicationLog> = emptyList(),
+    medications: List<Medication> = emptyList()
+) {
     val context = LocalContext.current
 
-    var notifications by remember { mutableStateOf(AppSettings.notificationsEnabled(context)) }
-    var vibration by remember { mutableStateOf(AppSettings.vibrationEnabled(context)) }
-    var snooze by remember { mutableStateOf(AppSettings.snoozeMinutes(context)) }
-    var showPrivacy by remember { mutableStateOf(false) }
+    var notifications by remember {
+        mutableStateOf(AppSettings.notificationsEnabled(context))
+    }
+
+    var vibration by remember {
+        mutableStateOf(AppSettings.vibrationEnabled(context))
+    }
+
+    var snooze by remember {
+        mutableStateOf(AppSettings.snoozeMinutes(context))
+    }
+
+    var showPrivacy by remember {
+        mutableStateOf(false)
+    }
 
     ScreenColumn {
         ScreenHeader("Settings", "Adjust the system to fit your rhythm")
 
         SectionLabel("PREFERENCES")
-        ToggleRow("App Notifications", "Turn on push medication alarms", notifications) {
+
+        ToggleRow(
+            "App Notifications",
+            "Turn on push medication alarms",
+            notifications
+        ) {
             notifications = it
             AppSettings.setNotificationsEnabled(context, it)
         }
+
         ToggleRow(
             "Vibration",
             "Vibrate when a reminder goes off",
@@ -88,32 +114,55 @@ fun SettingsScreen() {
             vibration = it
             AppSettings.setVibrationEnabled(context, it)
         }
+
         SnoozeRow(selected = snooze) {
             snooze = it
             AppSettings.setSnoozeMinutes(context, it)
         }
 
         Spacer(Modifier.height(16.dp))
+
         SectionLabel("DATA & LEGAL")
+
         LinkRow("Export Log History") {
             val send = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_SUBJECT, "Medication log history")
-                putExtra(Intent.EXTRA_TEXT, buildLogExport())
+                type = "text/csv"
+                putExtra(
+                    Intent.EXTRA_SUBJECT,
+                    "Medication log history"
+                )
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    buildLogExport(medicationLogs, medications)
+                )
             }
-            context.startActivity(Intent.createChooser(send, "Export log history"))
+
+            context.startActivity(
+                Intent.createChooser(send, "Export log history")
+            )
         }
-        LinkRow("Privacy Policy") { showPrivacy = true }
+
+        LinkRow("Privacy Policy") {
+            showPrivacy = true
+        }
+
         Spacer(Modifier.height(24.dp))
     }
 
     if (showPrivacy) {
         AlertDialog(
-            onDismissRequest = { showPrivacy = false },
+            onDismissRequest = {
+                showPrivacy = false
+            },
             containerColor = Color.White,
-            title = { Text("Privacy Policy", fontWeight = FontWeight.Bold, color = AppColors.Ink) },
+            title = {
+                Text(
+                    "Privacy Policy",
+                    fontWeight = FontWeight.Bold,
+                    color = AppColors.Ink
+                )
+            },
             text = {
-                // TODO: replace this placeholder with the group's final policy text
                 Text(
                     "Your medication information is kept for your own use. " +
                             "It is not shared with other people or organisations. " +
@@ -124,19 +173,46 @@ fun SettingsScreen() {
                 )
             },
             confirmButton = {
-                TextButton(onClick = { showPrivacy = false }) { Text("Close") }
+                TextButton(
+                    onClick = {
+                        showPrivacy = false
+                    }
+                ) {
+                    Text("Close")
+                }
             }
         )
     }
 }
 
-// TODO (API / database teammate): build this from the real log history
-private fun buildLogExport(): String = buildString {
-    appendLine("Medication log history")
-    appendLine("Medication,Dose,Time,Taken")
-    PlaceholderData.reminders.forEach {
-        val dose = it.detail.replace(" \u2022 ", " - ")
-        appendLine("${it.name},$dose,${it.time},${if (it.taken) "Yes" else "No"}")
+/*
+ * Builds a CSV-style medication history export.
+ */
+private fun buildLogExport(
+    medicationLogs: List<MedicationLog>,
+    medications: List<Medication>
+): String = buildString {
+
+    appendLine("Medication,Date and Time,Status,Notes")
+
+    medicationLogs.forEach { log ->
+
+        val medicationName = medications
+            .firstOrNull {
+                it.medicationId == log.medicationId
+            }
+            ?.medicationName ?: "Unknown medication"
+
+        val values = listOf(
+            medicationName,
+            log.scheduledAt,
+            log.status,
+            log.notes.orEmpty()
+        ).map { value ->
+            "\"${value.replace("\"", "\"\"")}\""
+        }
+
+        appendLine(values.joinToString(","))
     }
 }
 
@@ -149,7 +225,9 @@ private fun ToggleRow(
     onChange: (Boolean) -> Unit
 ) {
     Row(
-        Modifier.fillMaxWidth().padding(vertical = 10.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
@@ -158,8 +236,14 @@ private fun ToggleRow(
                 fontWeight = FontWeight.SemiBold,
                 color = if (enabled) AppColors.Ink else AppColors.Muted
             )
-            Text(subtitle, fontSize = 12.sp, color = AppColors.Muted)
+
+            Text(
+                subtitle,
+                fontSize = 12.sp,
+                color = AppColors.Muted
+            )
         }
+
         Switch(
             checked = checked,
             onCheckedChange = onChange,
@@ -176,14 +260,38 @@ private fun ToggleRow(
 }
 
 @Composable
-private fun SnoozeRow(selected: Int, onSelect: (Int) -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(vertical = 10.dp)) {
-        Text("Snooze length", fontWeight = FontWeight.SemiBold, color = AppColors.Ink)
-        Text("How long a reminder waits when you tap Snooze", fontSize = 12.sp, color = AppColors.Muted)
+private fun SnoozeRow(
+    selected: Int,
+    onSelect: (Int) -> Unit
+) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+    ) {
+        Text(
+            "Snooze length",
+            fontWeight = FontWeight.SemiBold,
+            color = AppColors.Ink
+        )
+
+        Text(
+            "How long a reminder waits when you tap Snooze",
+            fontSize = 12.sp,
+            color = AppColors.Muted
+        )
+
         Spacer(Modifier.height(10.dp))
+
         Row {
             listOf(5, 10, 15).forEach { minutes ->
-                ChoicePill("$minutes min", selected = minutes == selected) { onSelect(minutes) }
+                ChoicePill(
+                    "$minutes min",
+                    selected = minutes == selected
+                ) {
+                    onSelect(minutes)
+                }
+
                 Spacer(Modifier.width(8.dp))
             }
         }
@@ -191,32 +299,60 @@ private fun SnoozeRow(selected: Int, onSelect: (Int) -> Unit) {
 }
 
 @Composable
-private fun ChoicePill(label: String, selected: Boolean, onClick: () -> Unit) {
+private fun ChoicePill(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
     Surface(
         shape = RoundedCornerShape(50),
         color = if (selected) AppColors.Ink else Color.White,
-        border = BorderStroke(1.dp, if (selected) AppColors.Ink else AppColors.Border),
+        border = BorderStroke(
+            1.dp,
+            if (selected) AppColors.Ink else AppColors.Border
+        ),
         modifier = Modifier.clickable(onClick = onClick)
     ) {
         Text(
             label,
             fontSize = 13.sp,
             color = if (selected) Color.White else AppColors.Muted,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            )
         )
     }
 }
 
 @Composable
-private fun LinkRow(label: String, onClick: () -> Unit) {
+private fun LinkRow(
+    label: String,
+    onClick: () -> Unit
+) {
     Column {
         HorizontalDivider(color = AppColors.Border)
+
         Row(
-            Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 14.dp),
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(label, fontWeight = FontWeight.SemiBold, color = AppColors.Ink, modifier = Modifier.weight(1f))
-            Icon(AppIcons.ChevronRight, contentDescription = null, tint = AppColors.Muted, modifier = Modifier.size(22.dp))
+            Text(
+                label,
+                fontWeight = FontWeight.SemiBold,
+                color = AppColors.Ink,
+                modifier = Modifier.weight(1f)
+            )
+
+            Icon(
+                AppIcons.ChevronRight,
+                contentDescription = null,
+                tint = AppColors.Muted,
+                modifier = Modifier.size(22.dp)
+            )
         }
     }
 }

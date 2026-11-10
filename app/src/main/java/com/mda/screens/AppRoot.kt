@@ -17,7 +17,7 @@ import com.example.mda_mobile_app.data.model.users.LoginRequest
 import com.example.mda_mobile_app.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
 
-enum class Route { Login, Register, Main }
+enum class Route { Login, Register, ForgotPassword, Main }
 
 /**
  * Entry point for all screens. MainActivity just calls AppRoot().
@@ -109,9 +109,11 @@ fun AppRoot() {
                 },
                 onGoToRegister = {
                     route = Route.Register
+                    },
+                onForgotPassword = {
+                    route = Route.ForgotPassword
                 }
             )
-
             Route.Register -> RegistrationScreen(
                 onRegister = { fullName, email, password ->
                     scope.launch {
@@ -162,6 +164,12 @@ fun AppRoot() {
                     }
                 },
                 onGoToLogin = {
+                    route = Route.Login
+                }
+
+            )
+            Route.ForgotPassword -> ForgotPasswordScreen(
+                onBackToLogin = {
                     route = Route.Login
                 }
             )
