@@ -21,6 +21,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.Header
 import com.example.mda_mobile_app.data.model.users.LoginRequest
 import com.example.mda_mobile_app.data.model.users.LoginData
+import com.example.mda_mobile_app.data.model.users.ForgotPasswordRequest
 interface ApiService {
 
     @GET("api/health.php")
@@ -269,4 +270,11 @@ interface ApiService {
     suspend fun deleteTrustedContact(
         @Body request: DeleteTrustedContactRequest
     ): Response<ApiResponse<Any>>
+
+
+    @POST("api/forgot_password.php")
+    suspend fun forgotPassword(
+        @Body request: ForgotPasswordRequest
+    ): Response<ApiResponse<Any>>
+
 }

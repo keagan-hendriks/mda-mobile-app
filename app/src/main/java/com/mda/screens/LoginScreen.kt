@@ -15,7 +15,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun LoginScreen(
     onLogin: (String, String) -> Unit,
-    onGoToRegister: () -> Unit
+    onGoToRegister: () -> Unit,
+    onForgotPassword: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -46,7 +47,7 @@ fun LoginScreen(
             modifier = Modifier
                 .align(Alignment.End)
                 .clickable {
-                    errorMessage = "Forgot password is not available yet."
+                    onForgotPassword()
                 }
                 .padding(bottom = 24.dp)
         )
