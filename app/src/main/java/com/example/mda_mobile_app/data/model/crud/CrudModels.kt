@@ -19,15 +19,23 @@ data class Medication(
     val isActive: Boolean,
     val createdAt: String
 )
+data class CreateMedicationRequest(
+    val userId: Int,
+    val medicationName: String,
+    val notes: String? = null
+)
 
 data class Reminder(
     val reminderId: Int,
     val medicationId: Int,
     val reminderTime: String, // HH:MM:SS
+    val startDate: String,    // YYYY-MM-DD
+    val endDate: String?,     // YYYY-MM-DD or null
     val repeatDaily: Boolean,
     val isEnabled: Boolean,
     val createdAt: String
 )
+
 
 data class MedicationLog(
     val logId: Int,
@@ -62,16 +70,12 @@ data class CreateBadgeRequest(
     val pointsReward: Int = 0
 )
 
-data class CreateMedicationRequest(
-    val userId: Int,
-    val medicationName: String,
-    val notes: String? = null,
-    val isActive: Boolean = true
-)
 
 data class CreateReminderRequest(
     val medicationId: Int,
     val reminderTime: String,
+    val startDate: String,
+    val endDate: String? = null,
     val repeatDaily: Boolean = true,
     val isEnabled: Boolean = true
 )

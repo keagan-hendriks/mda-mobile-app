@@ -647,6 +647,7 @@ private fun DashboardStatCard(
 }
 
 // WEEKLY LINE CHART
+
 @Composable
 private fun WeeklyLineChart(days: List<WeeklyDay>) {
 
@@ -661,7 +662,7 @@ private fun WeeklyLineChart(days: List<WeeklyDay>) {
         val chartHeight = size.height
         val chartWidth = size.width
 
-        // Horizontal guide lines.
+        // Draw horizontal guide lines.
         for (level in 0..2) {
             val y = chartHeight * level / 2f
 
@@ -673,24 +674,33 @@ private fun WeeklyLineChart(days: List<WeeklyDay>) {
             )
         }
 
-        // Only plot days with recorded data.
+        // Keep each point connected to its actual day index.
         val points = days.mapIndexedNotNull { index, day ->
+
             if (!day.hasData) {
                 null
             } else {
+
                 val x = chartWidth * index / 6f
+
                 val y = chartHeight -
                         (day.percentage.coerceIn(0, 100) / 100f * chartHeight)
 
-                Offset(x, y)
+                Pair(index, Offset(x, y))
             }
         }
 
+        // Draw the trend line.
         if (points.size >= 2) {
-            val path = Path().apply {
-                moveTo(points.first().x, points.first().y)
 
-                points.drop(1).forEach { point ->
+            val path = Path().apply {
+
+                moveTo(
+                    points.first().second.x,
+                    points.first().second.y
+                )
+
+                points.drop(1).forEach { (_, point) ->
                     lineTo(point.x, point.y)
                 }
             }
@@ -705,23 +715,28 @@ private fun WeeklyLineChart(days: List<WeeklyDay>) {
             )
         }
 
-        points.forEachIndexed { index, point ->
-            val isToday = days.getOrNull(
-                days.indexOfFirst { day ->
-                    day.hasData &&
-                            (chartWidth * days.indexOf(day) / 6f) == point.x
-                }
-            )?.isToday == true
+        // Draw the data points.
+        points.forEach { (dayIndex, point) ->
+
+            val isToday = days[dayIndex].isToday
 
             drawCircle(
                 color = lineColor,
-                radius = if (isToday) 6.dp.toPx() else 4.dp.toPx(),
+                radius = if (isToday) {
+                    6.dp.toPx()
+                } else {
+                    4.dp.toPx()
+                },
                 center = point
             )
 
             drawCircle(
                 color = Color.White,
-                radius = if (isToday) 2.5.dp.toPx() else 1.8.dp.toPx(),
+                radius = if (isToday) {
+                    2.5.dp.toPx()
+                } else {
+                    1.8.dp.toPx()
+                },
                 center = point
             )
         }
