@@ -40,6 +40,8 @@ object Reminders {
                 CHANNEL_ID, "Medication reminders", NotificationManager.IMPORTANCE_HIGH
             )
             channel.description = "Reminders to take your medication"
+//            enableVibration(true)
+//            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
     }
@@ -188,6 +190,7 @@ object Reminders {
             .setContentTitle("Time for your medication")
             .setContentText("Whenever you're ready: $medicationName")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
             .setPublicVersion(lockScreenVersion)
             .setAutoCancel(true)
