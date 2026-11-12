@@ -13,13 +13,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import com.example.mda_mobile_app.ReminderActivity
+
 @Composable
-fun NotificationsScreen() {
+fun NotificationsScreen(userId: Int) {
     // TODO (API teammate): load real alerts instead of placeholder data
     var alerts by remember { mutableStateOf(PlaceholderData.alerts) }
 
     ScreenColumn {
         ScreenHeader("Notifications", "Stay updated with your daily treatment log")
+
+        val context = LocalContext.current
+
+        Button(
+            onClick = {
+                val intent = Intent(context, ReminderActivity::class.java)
+                intent.putExtra(ReminderActivity.EXTRA_USER_ID, userId)
+                context.startActivity(intent)
+            }
+        ) {
+            Text("Manage Medication Reminders")
+        }
 
         Row(
             Modifier.fillMaxWidth(),

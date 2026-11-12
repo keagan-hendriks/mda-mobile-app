@@ -249,7 +249,7 @@ fun MainScaffold(
                 BottomTab.Home -> HomeScreen(firstName = firstName, userId = userId)
                 BottomTab.Medications -> MedicationScreen(userId = userId)
 
-                BottomTab.Alerts -> NotificationsScreen()
+                BottomTab.Alerts -> NotificationsScreen(userId=userId)
 
                 BottomTab.Profile -> ProfileScreen(
                     fullName = fullName,
