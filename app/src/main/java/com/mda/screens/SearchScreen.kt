@@ -8,46 +8,30 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mda_mobile_app.data.model.crud.Medication
-import com.example.mda_mobile_app.ui.medication.MedicationViewModel
 
-// TODO: replace the test userId (1) with the real logged-in user once login works.
 @Composable
-fun SearchScreen(userId: Int = 1) {
-    val vm: MedicationViewModel = viewModel(
-        key = "medication-$userId",
-        factory = MedicationViewModel.factory(userId)
-    )
-    val state by vm.state.collectAsState()
-
+fun SearchScreen() {
     var query by remember { mutableStateOf("") }
-    var filter by remember { mutableStateOf("All") }
+    var category by remember { mutableStateOf("All") }
 
-    val results = state.medications.filter {
-        it.medicationName.contains(query, ignoreCase = true) &&
-                when (filter) {
-                    "Active" -> it.isActive
-                    "Inactive" -> !it.isActive
-                    else -> true
-                }
+    // TODO (API / database teammate): replace with a real search
+    val results = PlaceholderData.medications.filter {
+        it.name.contains(query, ignoreCase = true) &&
+                (category == "All" || it.category == category)
     }
 
     ScreenColumn {
-        ScreenHeader("Search & Explore", "Browse your medications")
+        ScreenHeader("Search & Explore", "Browse health logs and treatments")
 
         OutlinedTextField(
             value = query,
@@ -69,52 +53,22 @@ fun SearchScreen(userId: Int = 1) {
         Spacer(Modifier.height(12.dp))
 
         Row(Modifier.horizontalScroll(rememberScrollState())) {
-            listOf("All", "Active", "Inactive").forEach { name ->
-                FilterPill(name, selected = name == filter, onClick = { filter = name })
+            PlaceholderData.searchCategories.forEach { name ->
+                FilterPill(name, selected = name == category, onClick = { category = name })
                 Spacer(Modifier.width(8.dp))
             }
         }
 
         SectionLabel("MATCHED ITEMS", Modifier.padding(top = 12.dp))
 
-        if (state.loading) {
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth(),
-                color = AppColors.Ink,
-                trackColor = AppColors.Border
-            )
-            Spacer(Modifier.height(8.dp))
-        }
-
-        state.error?.let { message ->
-            ErrorCard(message = message, onRetry = vm::refresh)
-            Spacer(Modifier.height(8.dp))
-        }
-
         results.forEach { item ->
             MedicationRow(item)
             Spacer(Modifier.height(8.dp))
         }
-
-        if (!state.loading && state.error == null && results.isEmpty()) {
-            Text(
-                if (state.medications.isEmpty()) "No medications yet." else "No matches found. Try a different search.",
-                color = AppColors.Muted,
-                fontSize = 14.sp
-            )
+        if (results.isEmpty()) {
+            Text("No matches found. Try a different search.", color = AppColors.Muted, fontSize = 14.sp)
         }
         Spacer(Modifier.height(24.dp))
-    }
-}
-
-@Composable
-private fun ErrorCard(message: String, onRetry: () -> Unit) {
-    AppCard(color = Color(0xFFFEF2F2)) {
-        Column(Modifier.padding(12.dp)) {
-            Text("Couldn't load medications", fontWeight = FontWeight.SemiBold, color = AppColors.Danger)
-            Text(message, fontSize = 12.sp, color = AppColors.Muted)
-            TextButton(onClick = onRetry) { Text("Retry", color = AppColors.Ink) }
-        }
     }
 }
 
@@ -136,7 +90,7 @@ private fun FilterPill(label: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun MedicationRow(item: Medication) {
+private fun MedicationRow(item: MedItem) {
     AppCard {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Surface(
@@ -151,20 +105,10 @@ private fun MedicationRow(item: Medication) {
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(item.medicationName, fontWeight = FontWeight.SemiBold, color = AppColors.Ink)
-                Text(
-                    item.notes?.takeIf { it.isNotBlank() } ?: "No notes",
-                    fontSize = 12.sp,
-                    color = AppColors.Muted,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Text(item.name, fontWeight = FontWeight.SemiBold, color = AppColors.Ink)
+                Text(item.subtitle, fontSize = 12.sp, color = AppColors.Muted)
             }
-            Text(
-                if (item.isActive) "Active" else "Inactive",
-                fontSize = 13.sp,
-                color = if (item.isActive) AppColors.Success else AppColors.Muted
-            )
+            Text(item.dose, fontSize = 13.sp, color = AppColors.Ink)
         }
     }
 }
