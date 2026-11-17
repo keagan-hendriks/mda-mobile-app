@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +33,9 @@ fun ProfileScreen(
         )
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -46,35 +50,55 @@ fun ProfileScreen(
 
             androidx.compose.foundation.layout.Box(
                 modifier = Modifier
-                    .size(72.dp)
+                    .size(100.dp)
                     .background(AppColors.Surface, CircleShape)
-                    .border(1.dp, AppColors.Border, CircleShape),
+                    .border(2.dp, AppColors.Border, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = initials,
-                    fontSize = 22.sp,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = AppColors.Ink
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             Text(
                 text = fullName.ifBlank { "User" },
-                fontSize = 16.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppColors.Ink
             )
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Text(
+                text = email,
+                fontSize = 13.sp,
+                color = AppColors.Muted
+            )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        InfoRow("Full Name", fullName)
-        InfoRow("Email Address", email)
+        SectionLabel("PERSONAL INFORMATION")
 
-        Spacer(modifier = Modifier.height(24.dp))
+        AppCard(color = AppColors.Surface) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                InfoRow("Full Name", fullName)
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                InfoRow("Email Address", email)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(28.dp))
+        SectionLabel("ACCOUNT")
 
         OutlineButton(
             "Log Out from Device",
